@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload File</title>
+</head>
+<body>
+<h1>File Metadata</h1>
+<form id="uploadForm">
+  <input type="file" id="fileInput" name="file">
+  <button type="button" onclick="uploadFile()">Get Metadata</button>
+</form>
+<div id="filediv"><p id="filedata"></p></div>
+<script>
+function uploadFile() {
+  const fileInput = document.getElementById('fileInput');
+  const file = fileInput.files[0];
+  const chunkSize = 1024 * 1024; // 1MB chunk size
+  const chunk = file.slice(0, chunkSize);
+  const formData = new FormData();
+  file_div=document.getElementById("filedata")
+  formData.append('file', chunk);
+
+  console.log("Before Fetch")
+  fetch('http://0.0.0.0:8080/api', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.text();
+  })
+  .then(data => {
+    file_div.innerHTML=data;
+  })
+  .catch(error => {
+    file_div.innerHTML='Error:'+error;
+  });
+  console.log("After Fetch")
+}
+
+</script>
+
+</body>
+</html>

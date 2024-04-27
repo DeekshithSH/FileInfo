@@ -1,3 +1,4 @@
+import magic
 from exiftool import ExifTool
 
 def split_text(value):
@@ -6,6 +7,8 @@ def split_text(value):
 def get_metadata(file_path) -> str:
     with ExifTool() as et:
         metadata : dict= (et.execute_json(file_path))[0]
+    if(metadata.get("ExifTool:Error")):
+        return (magic.from_file(file_path)).replace(", ", "<br>")
     keys_to_remove = [
     "SourceFile",
     "File:Directory",

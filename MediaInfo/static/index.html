@@ -59,6 +59,7 @@ button[type="button"] {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
+  margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -72,25 +73,44 @@ button[type="button"]:hover {
 <body>
 <div class="container">
   <h1>File Metadata</h1>
-  <form id="uploadForm">
+  <form id="uploadForm" validate>
     <label for="fileInput">Choose File</label>
     <input type="file" id="fileInput" name="file">
-    <button type="button" onclick="uploadFile()">Get Metadata</button>
+    <p>or</p>
+    <input type="url" id="fileURL" name="fileURL" placeholder="enter a file url"><br>
+    <button type="button" onclick="uploadFile()" id="submit_btn" formnovalidate>Get Metadata</button>
   </form>
   <div id="filediv"><p id="filedata"></p></div>
 </div>
 <script>
-function uploadFile() {
-  const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0];
-  const chunkSize = 1024 * 1024; // 1MB chunk size
-  const chunk = file.slice(0, chunkSize);
-  const formData = new FormData();
-  file_div=document.getElementById("filedata")
-  formData.append('file', chunk);
+fileInput = document.getElementById('fileInput');
+fileURL=document.getElementById("fileURL");
+submit_btn=document.getElementById("submit_btn");
+file_div=document.getElementById("filedata")
 
+function uploadFile() {
+  if(fileURL.value){
+    end_point="url"
+    console.log("URL")
+    formData=fileURL.value
+  }
+  else if (fileInput.value){
+    console.log("File")
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    const chunkSize = 1024 * 1024; // 1MB chunk size
+    const chunk = file.slice(0, chunkSize);
+    var formData = new FormData();
+    formData.append('file', chunk);
+    end_point="file"
+  }
+  else{
+    file_div.innerHTML="Please Select a file or enter a URL"
+    return null;
+  }
   console.log("Before Fetch")
-  fetch('http://0.0.0.0:8080/api', {
+  file_div.innerHTML="Waiting for Response"
+  fetch(window.location.origin+'/api/'+end_point, {
     method: 'POST',
     body: formData
   })
@@ -98,6 +118,7 @@ function uploadFile() {
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
+    console.log("After Fetch")
     return response.text();
   })
   .then(data => {
@@ -106,7 +127,6 @@ function uploadFile() {
   .catch(error => {
     file_div.innerHTML='Error:'+error;
   });
-  console.log("After Fetch")
 }
 
 </script>

@@ -63,3 +63,7 @@ async def root_route_handler(request: web.Request):
         resp_text = f"Error: {e}"
     
     return web.Response(text=resp_text)
+
+@routes.get("/")
+async def handle_index(_):
+    return web.FileResponse(Var.PROJECT_PATH / 'static/index.html')

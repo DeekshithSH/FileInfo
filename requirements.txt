@@ -1,0 +1,5 @@
+python-dotenv
+aiohttp
+exifread
+python-magic
+bson

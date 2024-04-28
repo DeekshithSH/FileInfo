@@ -1,5 +1,5 @@
 python-dotenv
 aiohttp
-exifread
+pyexiftool
 python-magic
 bson
